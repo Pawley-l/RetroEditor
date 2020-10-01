@@ -67,8 +67,9 @@ Method myMethod(**parameter list**)
 Endmethod  
 
 myMethod(<parameter list>)  
-
+</pre>
 ### Example
+<pre>
 DrawTo x,y  
 MoveTo x,y  
 Circle **radius**  
@@ -92,5 +93,5 @@ Loop for Count
 	Width+10  
 	Height + 10  
 	Count+1  
-Endloop  
+Endloop
 </pre>
