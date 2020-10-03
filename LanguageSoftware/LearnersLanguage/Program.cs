@@ -1,23 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System;
 
 namespace LearnersLanguage
 {
-    static class Program
+    class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private static bool running = true;
+        private static Lexer lexer = new Lexer();
+        
+        static void Main(string[] args)
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            string input;
+            
+            while (running)
+            {
+                Console.Write("Command> ");
+                input = Console.ReadLine();
+
+                if (input == "exit")
+                    running = false;
+                else
+                    Console.WriteLine(RunCommand(input));
+            }
+        }
+
+        private static string RunCommand(string command)
+        {
+            lexer.AddCommand(command);
+            return "Command: " + command;
         }
     }
 }

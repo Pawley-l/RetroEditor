@@ -1,4 +1,4 @@
-﻿namespace LearnersLanguage
+﻿namespace Editor
 {
     partial class Form1
     {
