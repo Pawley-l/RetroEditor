@@ -22,26 +22,26 @@ namespace LearnersLanguageTest
         [Test]
         public void GenArithmetic()
         {
-            string[] comparison = new string[12] {
-                "TOKEN_NAME", 
-                "TOKEN_EQU", 
-                "TOKEN_INT",
-                "TOKEN_ADD",
-                "TOKEN_INT",
-                "TOKEN_SUB",
-                "TOKEN_INT",
-                "TOKEN_DIV",
-                "TOKEN_INT",
-                "TOKEN_MUL",
-                "TOKEN_INT",
-                "TOKEN_END"
+            var comparison = new Token.TokenType[12] {
+                Token.TokenType.TOKEN_SYMBOL, 
+                Token.TokenType.TOKEN_EQU, 
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_ADD,
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_SUB,
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_DIV,
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_MUL,
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_END
             };
             
-            _lexer.AddStatement("variable = 1 + 1 - 1 / 1 * 1");
+            _lexer.AddStatement("variable= 1 + 1 - 1 / 1 * 1");
 
             for (int i = 0; i < 12; i++)
             {
-                string compare = comparison[i];
+                var compare = comparison[i];
                 var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
@@ -54,18 +54,18 @@ namespace LearnersLanguageTest
         [Test]
         public void GenVariable()
         {
-            var comparison = new string[4] {
-                "TOKEN_NAME", 
-                "TOKEN_EQU", 
-                "TOKEN_INT",
-                "TOKEN_END"
+            var comparison = new Token.TokenType[4] {
+                Token.TokenType.TOKEN_SYMBOL, 
+                Token.TokenType.TOKEN_EQU, 
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_END
             };
             
             _lexer.AddStatement("variable = 10");
             
             for (int i = 0; i < 3; i++)
             {
-                string compare = comparison[i];
+                var compare = comparison[i];
                 var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
@@ -77,16 +77,16 @@ namespace LearnersLanguageTest
         [Test]
         public void IncorrectVariable()
         {
-            string[] comparison = new string[2] {
-                "TOKEN_UNKNOWN",
-                "TOKEN_END"
+            var comparison = new Token.TokenType[2] {
+                Token.TokenType.UNKNOWN,
+                Token.TokenType.TOKEN_END
             };
             
             _lexer.AddStatement("11BadVariable");
             
             for (int i = 0; i < 2; i++)
             {
-                string compare = comparison[i];
+                var compare = comparison[i];
                 var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
@@ -100,16 +100,16 @@ namespace LearnersLanguageTest
         [Test]
         public void GenKeyword()
         {
-            string[] comparison = new string[2] {
-                "TOKEN_KEYWORD",
-                "TOKEN_END"
+            var comparison = new Token.TokenType[2] {
+                Token.TokenType.TOKEN_KEYWORD,
+                Token.TokenType.TOKEN_END
             };
             
             _lexer.AddStatement("METHOD");
             
             for (int i = 0; i < 2; i++)
             {
-                string compare = comparison[i];
+                var compare = comparison[i];
                 var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
@@ -123,12 +123,12 @@ namespace LearnersLanguageTest
         [Test]
         public void GenConditions()
         {
-            string[] comparison = new string[5] {
-                "TOKEN_KEYWORD",
-                "TOKEN_INT",
-                "TOKEN_EQL",
-                "TOKEN_NAME",
-                "TOKEN_END"
+            var comparison = new Token.TokenType[5] {
+                Token.TokenType.TOKEN_KEYWORD,
+                Token.TokenType.TOKEN_INT,
+                Token.TokenType.TOKEN_EQU,
+                Token.TokenType.TOKEN_SYMBOL,
+                Token.TokenType.TOKEN_END
             };
             
             _lexer.AddStatement("if 10 = hello");
