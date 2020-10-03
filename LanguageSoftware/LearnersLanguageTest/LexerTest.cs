@@ -9,12 +9,13 @@ namespace LearnersLanguageTest
     [TestFixture]
     public class LexerTest
     {
-        private Lexer lexer;
+        private Lexer _lexer;
 
         [SetUp]
         public void ResetLexer()
         {
-            lexer = new Lexer();
+            // Reset every test
+            _lexer = new Lexer();
         }
         
         // Arithmetic
@@ -36,12 +37,12 @@ namespace LearnersLanguageTest
                 "TOKEN_END"
             };
             
-            lexer.AddStatement("variable = 1 + 1 - 1 / 1 * 1");
+            _lexer.AddStatement("variable = 1 + 1 - 1 / 1 * 1");
 
             for (int i = 0; i < 12; i++)
             {
                 string compare = comparison[i];
-                var token = lexer.GetTokens().ElementAt(i);
+                var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
                 
@@ -53,19 +54,19 @@ namespace LearnersLanguageTest
         [Test]
         public void GenVariable()
         {
-            string[] comparison = new string[4] {
+            var comparison = new string[4] {
                 "TOKEN_NAME", 
                 "TOKEN_EQU", 
                 "TOKEN_INT",
                 "TOKEN_END"
             };
             
-            lexer.AddStatement("variable = 10");
+            _lexer.AddStatement("variable = 10");
             
             for (int i = 0; i < 3; i++)
             {
                 string compare = comparison[i];
-                var token = lexer.GetTokens().ElementAt(i);
+                var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
                 
@@ -81,12 +82,12 @@ namespace LearnersLanguageTest
                 "TOKEN_END"
             };
             
-            lexer.AddStatement("11BadVariable");
+            _lexer.AddStatement("11BadVariable");
             
             for (int i = 0; i < 2; i++)
             {
                 string compare = comparison[i];
-                var token = lexer.GetTokens().ElementAt(i);
+                var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
                 
@@ -104,12 +105,12 @@ namespace LearnersLanguageTest
                 "TOKEN_END"
             };
             
-            lexer.AddStatement("METHOD");
+            _lexer.AddStatement("METHOD");
             
             for (int i = 0; i < 2; i++)
             {
                 string compare = comparison[i];
-                var token = lexer.GetTokens().ElementAt(i);
+                var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
                 
@@ -130,12 +131,12 @@ namespace LearnersLanguageTest
                 "TOKEN_END"
             };
             
-            lexer.AddStatement("if 10 = hello");
+            _lexer.AddStatement("if 10 = hello");
             
             for (var i = 0; i < 5; i++)
             {
                 var compare = comparison[i];
-                var token = lexer.GetTokens().ElementAt(i);
+                var token = _lexer.GetTokens().ElementAt(i);
                 
                 Assert.AreEqual(token.Type, compare);
                 
