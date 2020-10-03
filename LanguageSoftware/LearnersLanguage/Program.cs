@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LearnersLanguage.Exceptions;
-using LearnersLanguage.InternalTypes;
+using LearnersLanguage.Nodes.Data;
 
 namespace LearnersLanguage
 {
@@ -10,6 +10,8 @@ namespace LearnersLanguage
      * When executing from the terminal, use -r for interactive terminal.
      * Otherwise, direct it to the file that you want to execute
      * </summary>
+     * TODO: Fix all unhandled exceptions
+     * TODO: Improve design
      */
     class Program
     {

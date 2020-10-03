@@ -1,7 +1,8 @@
-using LearnersLanguage.InternalTypes;
-
 namespace LearnersLanguage.Nodes.Func
 {
+    /**
+     * Holds the identifier and the thing its equal to
+     */
     public class DeclarerNode : INode
     {
         public INode Left;

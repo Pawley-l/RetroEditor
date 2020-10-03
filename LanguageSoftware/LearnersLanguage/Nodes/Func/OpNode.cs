@@ -1,7 +1,10 @@
 using System;
 
-namespace LearnersLanguage.InternalTypes
+namespace LearnersLanguage.Nodes.Func
 {
+    /**
+     * Holds the left and right values. And holds the operation type
+     */
     public class OpNode : INode
     {
         public enum Type

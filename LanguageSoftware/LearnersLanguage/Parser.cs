@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using LearnersLanguage.Exceptions;
-using LearnersLanguage.InternalTypes;
+using LearnersLanguage.Nodes;
+using LearnersLanguage.Nodes.Data;
 using LearnersLanguage.Nodes.Func;
 
 namespace LearnersLanguage

@@ -1,5 +1,8 @@
-namespace LearnersLanguage.InternalTypes
+namespace LearnersLanguage.Nodes.Data
 {
+    /**
+     * Holds a integer value
+     */
     public class IntNode : INode
     {
         public int Number;

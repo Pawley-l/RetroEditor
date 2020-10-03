@@ -1,4 +1,4 @@
-namespace LearnersLanguage.InternalTypes
+namespace LearnersLanguage.Nodes
 {
     public interface INode
     {

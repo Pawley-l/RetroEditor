@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using LearnersLanguage.InternalTypes;
+using LearnersLanguage.Nodes.Data;
 
 namespace LearnersLanguage
 {

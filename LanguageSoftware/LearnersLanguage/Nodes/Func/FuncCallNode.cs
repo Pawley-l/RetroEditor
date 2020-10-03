@@ -1,8 +1,10 @@
 using System.Linq;
-using LearnersLanguage.InternalTypes;
 
 namespace LearnersLanguage.Nodes.Func
 {
+    /**
+     * Holds a identifier and parameters 
+     */
     public class FuncCallNode : INode
     {
         public INode Identifier;
