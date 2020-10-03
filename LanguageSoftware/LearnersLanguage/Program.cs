@@ -1,32 +1,74 @@
 ﻿using System;
+using System.Collections.Generic;
+using LearnersLanguage.Exceptions;
+using LearnersLanguage.InternalTypes;
 
 namespace LearnersLanguage
 {
+    /**
+     * <summary>
+     * When executing from the terminal, use -r for interactive terminal.
+     * Otherwise, direct it to the file that you want to execute
+     * </summary>
+     */
     class Program
     {
-        private static bool running = true;
-        private static Lexer lexer = new Lexer();
+        private static readonly string banner = " LearnersLanguage Interpreter ";
+        private static bool _running = true;
+        private static Interpreter _interpreter = new Interpreter();
         
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            string input;
+            // Nothing to execute if no args
+            if (args.Length < 1) return;
             
-            while (running)
+            _interpreter.MapMethod("print", Print);
+            
+            if (args[0] == "-r")
             {
-                Console.Write("Command> ");
-                input = Console.ReadLine();
-
-                if (input == "exit")
-                    running = false;
-                else
-                    Console.WriteLine(RunCommand(input));
+                string input;
+                Console.WriteLine(banner);
+                
+                _interpreter.MapMethod("exit", Exit);
+                
+                while (_running)
+                {
+                    Console.Write(" >> ");
+                    input = Console.ReadLine();
+            
+                    if (input == "exit")
+                        _running = false;
+                    else
+                        _interpreter.ExecuteLine(input);
+                }
+            }
+            
+            // Executes every file that is inputted
+            foreach (var arg in args)
+            {
+                _interpreter.ExecuteFromFile(arg);
             }
         }
-
-        private static string RunCommand(string command)
+        
+        /**
+         * Method for binding print. Only useful when executing from terminal.
+         */
+        private static IntNode Print(List<IntNode> input)
         {
-            lexer.AddCommand(command);
-            return "Command: " + command;
+            foreach (var node in input)
+            {
+                Console.WriteLine(node);
+            }
+            return new IntNode(-1);
+        }
+        
+        /**
+         * Method for binding an exit command
+         */
+        private static IntNode Exit(List<IntNode> input)
+        {
+            _running = false;
+            return new IntNode(0);
         }
     }
 }
