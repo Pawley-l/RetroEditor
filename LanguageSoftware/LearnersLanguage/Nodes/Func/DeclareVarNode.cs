@@ -1,20 +1,20 @@
 namespace LearnersLanguage.Nodes.Func
 {
     /**
-     * Holds the identifier and the thing its equal to
+     * Holds the identifier and the thing its equal to.
      */
-    public class DeclarerNode : INode
+    public class DeclareVarNode : INode
     {
         public INode Left;
         public INode Right;
 
-        public DeclarerNode(INode left, INode right)
+        public DeclareVarNode(INode left, INode right)
         {
             Left = left;
             Right = right;
         }
         
-        public DeclarerNode(INode left)
+        public DeclareVarNode(INode left)
         {
             Left = left;
         }

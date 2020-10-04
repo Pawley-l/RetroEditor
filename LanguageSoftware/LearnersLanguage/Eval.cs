@@ -16,8 +16,10 @@ namespace LearnersLanguage
      */
     public class Eval
     {
-        Dictionary<string, IntNode> _variables = new Dictionary<string, IntNode>();
-        Dictionary<string, Func<List<IntNode>, IntNode>> _func = new Dictionary<string, Func<List<IntNode>, IntNode>>();
+        private Dictionary<string, IntNode> _backVariables = new Dictionary<string, IntNode>();
+        private Dictionary<string, IntNode> _variables = new Dictionary<string, IntNode>();
+        private Dictionary<string, Func<List<IntNode>, IntNode>> _func = new Dictionary<string, Func<List<IntNode>, IntNode>>();
+        private List<MethodNode> _method = new List<MethodNode>();
         
         /**
          * <summary> Executes a AST </summary>
@@ -37,11 +39,12 @@ namespace LearnersLanguage
         {
             return node switch
             {
-                DeclarerNode declarerNode => ExecuteDeclareNode(declarerNode),
+                DeclareVarNode declarerNode => ExecuteDeclareNode(declarerNode),
                 OpNode opNode => ExecuteOpNode(opNode),
                 IdentifierNode identity => GetVariable(identity),
                 FuncCallNode call => ExecuteFunctionCall(call),
                 IntNode intNode => intNode,
+                MethodNode method => ExecuteDeclareMethod(method),
                 _ => new IntNode(-1)
             };
         }
@@ -67,7 +70,7 @@ namespace LearnersLanguage
         /**
          * Executes its equal first then sets the variable to it's value
          */
-        private INode ExecuteDeclareNode(DeclarerNode node)
+        private INode ExecuteDeclareNode(DeclareVarNode node)
         {
             // Dont execute because it hasnt been declared yet
             var identifier = node.Left as IdentifierNode;
@@ -91,10 +94,45 @@ namespace LearnersLanguage
                 {
                     parameters.Add(Execute(parameter) as IntNode);
                 }
+
+                if (_func.ContainsKey(identity.Identifier))
+                {
+                    _func[identity.Identifier].DynamicInvoke(parameters);
+                }
                 
-                _func[identity.Identifier].DynamicInvoke(parameters);
+                ExecuteMethod(identity, parameters);
             }
                 
+            return null;
+        }
+
+        private INode ExecuteMethod(IdentifierNode identifier, List<IntNode> parameters)
+        {
+            foreach (var method in _method)
+            {
+                if (method.Identifier is IdentifierNode nodeid)
+                {
+                    if (nodeid.Identifier == identifier.Identifier)
+                    {
+                        _backVariables = _variables;
+                        for (var i = 0; i < parameters.Count; i++)
+                        {
+                            if (method.Parameters[i] is IdentifierNode id)
+                                SetVariable(id, parameters[i]);
+                        }
+
+                        Execute(method.Body);
+                        _variables = _backVariables;
+                    }
+                }
+            }
+
+            return null;
+        }
+        
+        private INode ExecuteDeclareMethod(MethodNode method)
+        {
+            _method.Add(method);
             return null;
         }
         
@@ -108,6 +146,15 @@ namespace LearnersLanguage
         public void MapMethod(string identity, Func<List<IntNode>, IntNode> func)
         {
             _func.Add(identity, func);
+        }
+
+        /**
+         * <summary> Resets everything but the mapped methods. </summary>
+         */
+        public void Reset()
+        {
+            _method.Clear();
+            _variables.Clear();
         }
         
         /*

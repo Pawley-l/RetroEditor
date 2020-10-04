@@ -70,7 +70,7 @@ namespace LearnersLanguageTest
 
             Console.WriteLine(ast[0]);
 
-            if (ast[0] is DeclarerNode node)
+            if (ast[0] is DeclareVarNode node)
             {
                 if (node.Left is IdentifierNode identity)
                     Assert.AreEqual(identity.Identifier, "value");

@@ -11,13 +11,19 @@ namespace LearnersLanguage
      * <summary>
      * Parser takes the tokens and uses it to generate a AST. The Abstract Syntax Tree is a tree made of nodes which
      * are generated in a way based on the languages rules. 
-     * 
+     * TODO: Parse keywords
      * </summary>
      */
     public class Parser
     {
+        private List<INode> _backAbstractSyntaxTree = new List<INode>(); // Uses for holding the main syntax tree when working on a method declaration
+        private bool _inMethod = false;
+        private MethodNode _backDeclareMethod;
+        
         private List<INode> _abstractSyntaxTree = new List<INode>();
         private List<Token> _currentStatement = new List<Token>();
+
+        
         
         /**
          * <summary>
@@ -30,7 +36,9 @@ namespace LearnersLanguage
             {
                 if (token.Type == Token.TokenType.TOKEN_END)
                 {
-                    _abstractSyntaxTree.Add(ParseStatement(null));
+                    var node = ParseStatement(null);
+                    if (node != null)
+                        _abstractSyntaxTree.Add(node);
                     _currentStatement.Clear();
                 }
                 else 
@@ -82,7 +90,7 @@ namespace LearnersLanguage
                     break;
                 case Token.TokenType.TOKEN_EQU:
                     if (previous is IntNode || previous is IdentifierNode)
-                        return DeclareSymbol(previous);
+                        return DeclareVar(previous);
                     break;
                 case Token.TokenType.TOKEN_LPAR:
                     if (previous is IdentifierNode)
@@ -91,7 +99,8 @@ namespace LearnersLanguage
                 case Token.TokenType.TOKEN_COMMA:
                     Next();
                     return null;
-                case Token.TokenType.TOKEN_KEYWORD: // TODO: Make node for this when needed
+                case Token.TokenType.TOKEN_KEYWORD:
+                    TokenKeyword();
                     break;
                 case Token.TokenType.TOKEN_INT:
                     return TokenInt();
@@ -138,7 +147,7 @@ namespace LearnersLanguage
             var currentNode = new IdentifierNode(_currentStatement[0].Value);
             var next = ParseStatement(currentNode);
 
-            if (next is DeclarerNode)
+            if (next is DeclareVarNode)
                 return next;
             if (next is FuncCallNode func)
                 return func;
@@ -148,6 +157,35 @@ namespace LearnersLanguage
             opnext.Left = currentNode;
             return opnext;
 
+        }
+
+        private INode TokenKeyword()
+        {
+            // Split the AST at the end for each keyword
+            switch (_currentStatement[0].Value)
+            {
+                    case "IF":
+                        break;
+                    case "ENDIF":
+                        break;
+                    case "METHOD":
+                        return DeclareMethod();
+                    case "ENDMETHOD":
+                        if (_inMethod)
+                        {
+                            _backDeclareMethod.Body = _abstractSyntaxTree;
+                            _abstractSyntaxTree = _backAbstractSyntaxTree;
+                            _inMethod = false;
+                            _abstractSyntaxTree.Add(_backDeclareMethod);
+                        }
+                        break;
+                    case "LOOP":
+                        break;
+                    case "ENDLOOP":
+                        break;
+            }
+
+            return null;
         }
         
         /**
@@ -182,12 +220,57 @@ namespace LearnersLanguage
         /**
          * When declaring a variable, the node it equals to needs to be resolved first before the DeclarerNode can be added
          */
-        private INode DeclareSymbol(INode previous)
+        private INode DeclareVar(INode previous)
         {
-            var currentNode = new DeclarerNode(previous);
+            var currentNode = new DeclareVarNode(previous);
             var next = ParseStatement(currentNode);
             currentNode.Right = next;
             return currentNode;
+        }
+
+        /**
+         * Declare Method
+         */
+        private INode DeclareMethod()
+        {
+            // 0 = keyword
+            // 1 = identifier 
+            // 3 = Lpar 
+            Next();
+            _backDeclareMethod = new MethodNode();
+            // Get Identifier
+            _backDeclareMethod.Identifier = new IdentifierNode(_currentStatement[0].Value);
+            
+            Next();
+            
+            var rindex = 0;
+            for (var i = 0; i < _currentStatement.Count; i++)
+                if (_currentStatement[i].Type == Token.TokenType.TOKEN_RPAR)
+                    rindex = i;
+            
+            var parameters = new List<INode>();
+            
+            var parameterTokens = _currentStatement.GetRange(1, rindex);
+            var holder = _currentStatement;
+            _currentStatement = parameterTokens;
+            
+            for (var i = 0; i < rindex; i++)
+            {
+                var node = ParseStatement(null);
+                if (node == null)
+                    continue;
+                    
+                parameters.Add(node);
+            }
+            
+            _currentStatement = holder;
+            
+            _backDeclareMethod.Parameters = parameters.ToArray();
+            _inMethod = true;
+            _backAbstractSyntaxTree = _abstractSyntaxTree;
+            _abstractSyntaxTree = new List<INode>();
+            _currentStatement.Clear();
+            return null;
         }
         
         /**

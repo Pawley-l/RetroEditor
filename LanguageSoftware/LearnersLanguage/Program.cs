@@ -21,34 +21,35 @@ namespace LearnersLanguage
         
         private static void Main(string[] args)
         {
-            // Nothing to execute if no args
-            if (args.Length < 1) return;
-            
             _interpreter.MapMethod("print", Print);
             
-            if (args[0] == "-r")
-            {
-                string input;
-                Console.WriteLine(banner);
-                
-                _interpreter.MapMethod("exit", Exit);
-                
-                while (_running)
-                {
-                    Console.Write(" >> ");
-                    input = Console.ReadLine();
+            if (args.Length < 1) InteractiveMode();
             
-                    if (input == "exit")
-                        _running = false;
-                    else
-                        _interpreter.ExecuteLine(input);
-                }
-            }
+            if (args[0] == "-r") InteractiveMode();
             
             // Executes every file that is inputted
             foreach (var arg in args)
             {
                 _interpreter.ExecuteFromFile(arg);
+            }
+        }
+
+        private static void InteractiveMode()
+        {
+            string input;
+            Console.WriteLine(banner);
+                
+            _interpreter.MapMethod("exit", Exit);
+
+            while (_running)
+            {
+                Console.Write(" >> ");
+                input = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
+                    _interpreter.Execute();
+                
+                _interpreter.ParseLine(input);
             }
         }
         
