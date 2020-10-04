@@ -10,9 +10,9 @@ namespace LearnersLanguage
      */
     public class Interpreter
     {
-        private static Lexer _lexer = new Lexer();
-        private static readonly Eval _eval = new Eval();
-        private static int _line = 0;
+        private Lexer _lexer = new Lexer();
+        private readonly Eval _eval = new Eval();
+        private int _line = 0;
         
         /**
          * <summary> Reads and executes code from a file. </summary>

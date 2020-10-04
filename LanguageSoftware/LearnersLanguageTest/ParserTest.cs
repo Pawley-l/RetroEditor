@@ -14,7 +14,7 @@ namespace LearnersLanguageTest
         private Lexer _lexer;
 
         [SetUp]
-        public void ResetLexer()
+        public void Reset()
         {
             // Reset both every test
             _lexer = new Lexer();

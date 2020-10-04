@@ -2,5 +2,5 @@
 var = 10
 
 if var = 10
-	print(1)
+	test()
 endif

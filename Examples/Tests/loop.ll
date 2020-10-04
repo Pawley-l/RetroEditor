@@ -1,6 +1,6 @@
 x = 10 
 
 loop x > 0
-	print(x)
+	test()
 	x = x - 1
 endloop
