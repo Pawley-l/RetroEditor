@@ -37,16 +37,23 @@ namespace LearnersLanguage
          */
         private INode Execute(INode node)
         {
-            return node switch
+            try
             {
-                DeclareVarNode declarerNode => ExecuteDeclareNode(declarerNode),
-                OpNode opNode => ExecuteOpNode(opNode),
-                IdentifierNode identity => GetVariable(identity),
-                FuncCallNode call => ExecuteFunctionCall(call),
-                IntNode intNode => intNode,
-                MethodNode method => ExecuteDeclareMethod(method),
-                _ => new IntNode(-1)
-            };
+                return node switch
+                {
+                    DeclareVarNode declarerNode => ExecuteDeclareNode(declarerNode),
+                    OpNode opNode => ExecuteOpNode(opNode),
+                    IdentifierNode identity => GetVariable(identity),
+                    FuncCallNode call => ExecuteFunctionCall(call),
+                    IntNode intNode => intNode,
+                    MethodNode method => ExecuteDeclareMethod(method),
+                    _ => new IntNode(-1)
+                };
+            }
+            catch (UndeclaredSymbolException)
+            {
+                throw;
+            }
         }
         
         /**
@@ -105,7 +112,10 @@ namespace LearnersLanguage
                 
             return null;
         }
-
+        
+        /**
+         * Executes user defined method if it exists
+         */
         private INode ExecuteMethod(IdentifierNode identifier, List<IntNode> parameters)
         {
             foreach (var method in _method)
@@ -171,7 +181,7 @@ namespace LearnersLanguage
             {
                 return _variables[identity.Identifier];
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new UndeclaredSymbolException(identity.Identifier + " has not been declared. ");
             }

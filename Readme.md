@@ -1,7 +1,24 @@
 # Advanced Software Engineering Assessed Work
 
+## Feature Checklist
+### Language 
+
+- [x] Variable support
+- [x] Method binding api
+- [x] Method declaring and calling
+- [ ] Syntax Checking
+- [ ] Loop and Conditions
+
+### Editor
+
+- [ ] Text Editor Window
+- [ ] Graphics Window
+- [ ] Drawing commands
+- [ ] Factory Design Patterns
+- [ ] Additional Design Patterns
+
 ## Requirments
-<pre>
+```
 1 Assignment due 9/11/2020  
         1.1 Management  
                 1.1.1 Appropriate unit tests set up  
@@ -27,71 +44,4 @@
                 2.3.3 Code documented with XML  
                 2.3.4 Exception Handling  
         2.4 Additional Functionality  
-</pre>
-
-## Programming Language Syntax & Funcs
-
-### Objects
-<pre>
-rectangle **width**, **height** 
-circle **radius** 
-triangle **side**,**side**,**side**
-</pre>
-
-### Main Functions
-<pre>
-pen **colour**  
-fill **on/off**  
-moveTo **position**  
-drawTo **position**  
-clear  
-reset  
-</pre>
-
-### Conditions
-<pre>
-if **condition**  
-	~  
-endif  
-</pre>
-### Loops
-<pre>
-loop  
-	~~  
-endloop  
-</pre>
-### Methods
-<pre>
-Method myMethod(**parameter list**)  
-	~~  
-Endmethod  
-
-myMethod(<parameter list>)  
-</pre>
-### Example
-<pre>
-DrawTo x,y  
-MoveTo x,y  
-Circle **radius**  
-Rectangle **width**, **height**  
-Triangle **base**, **adj**, **hyp**  
-Polygon [points,...]  
-
-If <variable>=10  
-	Line 1  
-	Line 2  
-Endif  
-
-Radius = 20  
-Width = 20  
-Height = 20  
-Count = 1  
-Loop for Count  
-	Circle radius  
-	Radius+10  
-	Rectangle width, height  
-	Width+10  
-	Height + 10  
-	Count+1  
-Endloop
-</pre>
+```

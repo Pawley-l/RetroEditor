@@ -74,27 +74,6 @@ namespace LearnersLanguageTest
             }
         }
 
-        [Test]
-        public void IncorrectVariable()
-        {
-            var comparison = new Token.TokenType[2] {
-                Token.TokenType.UNKNOWN,
-                Token.TokenType.TOKEN_END
-            };
-            
-            _lexer.AddStatement("11BadVariable");
-            
-            for (int i = 0; i < 2; i++)
-            {
-                var compare = comparison[i];
-                var token = _lexer.GetTokens().ElementAt(i);
-                
-                Assert.AreEqual(token.Type, compare);
-                
-                Console.WriteLine(i + "| " + token.Type + " == " + compare);
-            }
-        }
-        
         // Keyword match
         
         [Test]

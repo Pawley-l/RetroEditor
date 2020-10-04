@@ -46,6 +46,7 @@ namespace LearnersLanguageTest
             _interpreter = new Interpreter();
             _interpreter.MapMethod("test" ,TestMethod);
             _interpreter.ExecuteFromFile("../../../../../Examples/Tests/method.ll");
+            Assert.IsTrue(_methodTrue);
         }
         
         [Test]
@@ -54,6 +55,7 @@ namespace LearnersLanguageTest
             _interpreter = new Interpreter();
             _interpreter.MapMethod("test" ,TestLoop);
             _interpreter.ExecuteFromFile("../../../../../Examples/Tests/loop.ll");      
+            Assert.IsTrue(_loopTrue);
         }
         
         [Test]
@@ -62,6 +64,7 @@ namespace LearnersLanguageTest
             _interpreter = new Interpreter();
             _interpreter.MapMethod("test" , TestMethodMap);
             _interpreter.ExecuteFromFile("../../../../../Examples/Tests/method.ll");
+            Assert.IsTrue(_mapMethod);
         }
         
         [Test]
@@ -70,6 +73,7 @@ namespace LearnersLanguageTest
             _interpreter = new Interpreter();
             _interpreter.MapMethod("test" ,TestCondition);
             _interpreter.ExecuteFromFile("../../../../../Examples/Tests/conditions.ll");
+            Assert.IsTrue(_conditionTrue);
         }
     }
 }

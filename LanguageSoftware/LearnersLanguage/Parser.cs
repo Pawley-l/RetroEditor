@@ -10,9 +10,11 @@ namespace LearnersLanguage
     /**
      * <summary>
      * Parser takes the tokens and uses it to generate a AST. The Abstract Syntax Tree is a tree made of nodes which
-     * are generated in a way based on the languages rules. 
-     * TODO: Parse keywords
+     * are generated in a way based on the languages rules.
      * </summary>
+     *
+     * TODO: Clean and simplify
+     * TODO: Class too big
      */
     public class Parser
     {
@@ -147,11 +149,14 @@ namespace LearnersLanguage
             var currentNode = new IdentifierNode(_currentStatement[0].Value);
             var next = ParseStatement(currentNode);
 
-            if (next is DeclareVarNode)
-                return next;
-            if (next is FuncCallNode func)
-                return func;
-            
+            switch (next)
+            {
+                case DeclareVarNode _:
+                    return next;
+                case FuncCallNode func:
+                    return func;
+            }
+
             if (!(next is OpNode opnext)) return currentNode;
             
             opnext.Left = currentNode;
@@ -230,17 +235,13 @@ namespace LearnersLanguage
 
         /**
          * Declare Method
+         * TODO: This whole method needs cleaning up
          */
         private INode DeclareMethod()
         {
-            // 0 = keyword
-            // 1 = identifier 
-            // 3 = Lpar 
             Next();
             _backDeclareMethod = new MethodNode();
-            // Get Identifier
             _backDeclareMethod.Identifier = new IdentifierNode(_currentStatement[0].Value);
-            
             Next();
             
             var rindex = 0;

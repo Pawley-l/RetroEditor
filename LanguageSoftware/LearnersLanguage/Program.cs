@@ -10,8 +10,6 @@ namespace LearnersLanguage
      * When executing from the terminal, use -r for interactive terminal.
      * Otherwise, direct it to the file that you want to execute
      * </summary>
-     * TODO: Fix all unhandled exceptions
-     * TODO: Improve design
      */
     class Program
     {
@@ -46,10 +44,23 @@ namespace LearnersLanguage
                 Console.Write(" >> ");
                 input = Console.ReadLine();
 
-                if (string.IsNullOrEmpty(input) || string.IsNullOrWhiteSpace(input))
+                try
+                {
+                    _interpreter.ParseLine(input);
                     _interpreter.Execute();
-                
-                _interpreter.ParseLine(input);
+                }
+                catch (UndeclaredSymbolException e)
+                {
+                    Console.WriteLine(e.Message);
+                    
+                    Console.Write(" Stacktrace? y/n ");
+                    input = Console.ReadLine();
+
+                    if (input == "y")
+                        Console.WriteLine(e.StackTrace);
+
+                    Exit(null);
+                }
             }
         }
         

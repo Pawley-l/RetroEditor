@@ -15,8 +15,8 @@ namespace LearnersLanguage
      * </summary>
      */
     public class Lexer
-    { 
-        List<Token> tokens = new List<Token>();
+    {
+        private readonly List<Token> _tokens = new List<Token>();
         
         /**
          * <summary>
@@ -29,7 +29,7 @@ namespace LearnersLanguage
             // I think nodes is the wrong name
             var nodes = SplitInput(statement);
 
-            bool added = false;
+            var added = false;
             
             foreach (var node in nodes)
             {
@@ -44,10 +44,10 @@ namespace LearnersLanguage
                     value = node;
                 
                 added = true;
-                tokens.Add(new Token(token, value));
+                _tokens.Add(new Token(token, value));
             }
             if (added)
-                tokens.Add(new Token(Token.TokenType.TOKEN_END, "null"));
+                _tokens.Add(new Token(Token.TokenType.TOKEN_END, "null"));
         }
         
         /**
@@ -55,7 +55,7 @@ namespace LearnersLanguage
          */
         public static List<string> SplitInput(string input)
         {
-            MatchCollection matchList = Regex.Matches(input, @"(\d+)|(\w+)|\+|\-|\*|\/|\,|\(|\)|\=");
+            var matchList = Regex.Matches(input, @"(\d+)|(\w+)|\+|\-|\*|\/|\,|\(|\)|\=");
             var all = matchList.Cast<Match>().Select(match => match.Value).ToList();
 
             return all;
@@ -66,7 +66,7 @@ namespace LearnersLanguage
          */
         public IEnumerable<Token> GetTokens()
         {
-            return tokens;
+            return _tokens;
         }
     }
 }
