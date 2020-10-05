@@ -6,8 +6,8 @@
 - [x] Variable support
 - [x] Method binding api
 - [x] Method declaring and calling
-- [ ] Syntax Checking
-- [ ] Loop and Conditions
+- [~] Syntax Checking
+- [~] Loop and Conditions
 
 ### Editor
 
@@ -17,7 +17,7 @@
 - [ ] Factory Design Patterns
 - [ ] Additional Design Patterns
 
-## Requirments
+## Requirements
 ```
 1 Assignment due 9/11/2020  
         1.1 Management  
@@ -30,7 +30,7 @@
                 1.2.4 Drawing Commands working e.g. shapes, colours and fills  
                 1.2.5 Written with inheritance and design patterns  
 2 Assignment due 4/1/2021
-        2.1 Managemant  
+        2.1 Management  
                 2.1.1 Professional use of version Control  
                 2.2 Extended Language  
                 2.2.1 Variable support  
