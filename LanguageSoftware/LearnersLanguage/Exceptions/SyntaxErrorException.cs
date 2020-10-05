@@ -4,9 +4,12 @@ namespace LearnersLanguage.Exceptions
 {
     public class SyntaxErrorException : Exception
     {
-        public SyntaxErrorException(string message)
+        public int Line;
+        public string ErrorMessage;
+        
+        public SyntaxErrorException(string error)
         {
-            
+            ErrorMessage = error;
         }
     }
 }

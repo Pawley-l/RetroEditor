@@ -28,13 +28,14 @@ namespace LearnersLanguage
             TOKEN_END
         }
         
-        private static string[] keywords = new string[6]
+        private static string[] keywords = new string[7]
         {
             "IF",
             "ENDIF",
             "METHOD",
             "ENDMETHOD",
             "LOOP",
+            "FOR",
             "ENDLOOP"
         };
         

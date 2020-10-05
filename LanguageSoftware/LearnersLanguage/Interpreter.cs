@@ -18,8 +18,8 @@ namespace LearnersLanguage
     public class Interpreter
     {
         private readonly Lexer _lexer = new Lexer();
-        private readonly Eval _eval = new Eval();
-
+        private readonly Walker _eval = new Walker();
+        private int Line;
         /**
          * <summary> Reads and executes code from a file. </summary>
          * <code>
@@ -43,10 +43,8 @@ namespace LearnersLanguage
             {
                 _eval.Execute(parser.LoadTokens(_lexer));
             }
-            catch (UndeclaredSymbolException)
-            {
-                throw;
-            }
+            catch (UndeclaredSymbolException) { throw; }
+                
         }
         
         /**
@@ -54,6 +52,7 @@ namespace LearnersLanguage
          */
         public void ParseLine(string line)
         {
+            Line++;
             _lexer.AddStatement(line);
         }
         
@@ -69,8 +68,15 @@ namespace LearnersLanguage
                 _eval.Reset();
                 _eval.Execute(parser.LoadTokens(_lexer));
             }
-            catch (UndeclaredSymbolException)
+            // Adding line number to the exception for better readability
+            catch (UndeclaredSymbolException e)
             {
+                e.Line = Line;
+                throw;
+            }
+            catch (SyntaxErrorException e)
+            {
+                e.Line = Line;
                 throw;
             }
         }

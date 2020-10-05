@@ -13,6 +13,7 @@ namespace LearnersLanguage
      * are generated in a way based on the languages rules.
      * </summary>
      *
+     * TODO: Implement template method pattern for better error handling
      * TODO: Clean and simplify
      * TODO: Class too big
      */
@@ -26,6 +27,7 @@ namespace LearnersLanguage
         private List<INode> _backAbstractSyntaxTree = new List<INode>(); 
         private bool _inMethod, _inLoop;
         private MethodNode _backDeclareMethod;
+        private LoopNode _backDefineLoop;
         
         private List<INode> _abstractSyntaxTree = new List<INode>();
         private List<Token> _currentStatement = new List<Token>();
@@ -37,17 +39,24 @@ namespace LearnersLanguage
          */
         public List<INode> LoadTokens(Lexer lexer)
         {
-            foreach (var token in lexer.GetTokens())
+            try
             {
-                if (token.Type == Token.TokenType.TOKEN_END)
+                foreach (var token in lexer.GetTokens())
                 {
-                    var node = ParseStatement(null);
-                    if (node != null)
-                        _abstractSyntaxTree.Add(node);
-                    _currentStatement.Clear();
+                    if (token.Type == Token.TokenType.TOKEN_END)
+                    {
+                        var node = ParseStatement(null);
+                        if (node != null)
+                            _abstractSyntaxTree.Add(node);
+                        _currentStatement.Clear();
+                    }
+                    else
+                        _currentStatement.Add(token);
                 }
-                else 
-                    _currentStatement.Add(token);
+            }
+            catch (SyntaxErrorException)
+            {
+                throw;
             }
 
             return _abstractSyntaxTree;
@@ -74,45 +83,52 @@ namespace LearnersLanguage
 
             if (_currentStatement.Count == 0)
                 return null;
-            
-            switch (_currentStatement[0].Type)
+
+            try
             {
-                case Token.TokenType.TOKEN_ADD:
-                    if (previous is IntNode || previous is IdentifierNode)
-                        return TokenOpNode(OpNode.Type.Add, previous);
-                    break;
-                case Token.TokenType.TOKEN_SUB:
-                    if (previous is IntNode || previous is IdentifierNode)
-                        return TokenOpNode(OpNode.Type.Sub, previous);
-                    break;
-                case Token.TokenType.TOKEN_DIV:
-                    if (previous is IntNode || previous is IdentifierNode)
-                        return TokenOpNode(OpNode.Type.Div, previous);
-                    break;
-                case Token.TokenType.TOKEN_MUL:
-                    if (previous is IntNode || previous is IdentifierNode)
-                        return TokenOpNode(OpNode.Type.Mul, previous);
-                    break;
-                case Token.TokenType.TOKEN_EQU:
-                    if (previous is IntNode || previous is IdentifierNode)
-                        return DeclareVar(previous);
-                    break;
-                case Token.TokenType.TOKEN_LPAR:
-                    if (previous is IdentifierNode)
-                        return CallFunction(previous);
-                    break;
-                case Token.TokenType.TOKEN_COMMA:
-                    Next();
-                    return null;
-                case Token.TokenType.TOKEN_KEYWORD:
-                    TokenKeyword();
-                    break;
-                case Token.TokenType.TOKEN_INT:
-                    return TokenInt();
-                case Token.TokenType.TOKEN_SYMBOL:
-                    return TokenSymbol();
-                default:
-                    return null;;
+                switch (_currentStatement[0].Type)
+                {
+                    case Token.TokenType.TOKEN_ADD:
+                        if (previous is IntNode || previous is IdentifierNode)
+                            return TokenOpNode(OpNode.Type.Add, previous);
+                        break;
+                    case Token.TokenType.TOKEN_SUB:
+                        if (previous is IntNode || previous is IdentifierNode)
+                            return TokenOpNode(OpNode.Type.Sub, previous);
+                        break;
+                    case Token.TokenType.TOKEN_DIV:
+                        if (previous is IntNode || previous is IdentifierNode)
+                            return TokenOpNode(OpNode.Type.Div, previous);
+                        break;
+                    case Token.TokenType.TOKEN_MUL:
+                        if (previous is IntNode || previous is IdentifierNode)
+                            return TokenOpNode(OpNode.Type.Mul, previous);
+                        break;
+                    case Token.TokenType.TOKEN_EQU:
+                        if (previous is IntNode || previous is IdentifierNode)
+                            return DeclareVar(previous);
+                        break;
+                    case Token.TokenType.TOKEN_LPAR:
+                        if (previous is IdentifierNode)
+                            return CallFunction(previous);
+                        break;
+                    case Token.TokenType.TOKEN_COMMA:
+                        Next();
+                        return null;
+                    case Token.TokenType.TOKEN_KEYWORD:
+                        TokenKeyword();
+                        break;
+                    case Token.TokenType.TOKEN_INT:
+                        return TokenInt();
+                    case Token.TokenType.TOKEN_SYMBOL:
+                        return TokenSymbol();
+                    default:
+                        return null;;
+                }
+            }
+            catch (SyntaxErrorException)
+            {
+                throw;
             }
             return null;
         }
@@ -164,7 +180,6 @@ namespace LearnersLanguage
             
             opnext.Left = currentNode;
             return opnext;
-
         }
 
         private INode TokenKeyword()
@@ -185,15 +200,25 @@ namespace LearnersLanguage
                             _abstractSyntaxTree = _backAbstractSyntaxTree;
                             _inMethod = false;
                             _abstractSyntaxTree.Add(_backDeclareMethod);
+                            return null;
                         }
                         break;
                     case "LOOP":
-                        break;
+                        TokenLoop();
+                        return null;
                     case "ENDLOOP":
+                        if (_inLoop)
+                        {
+                            _backDefineLoop.Body = _abstractSyntaxTree;
+                            _abstractSyntaxTree = _backAbstractSyntaxTree;
+                            _inLoop = false;
+                            _abstractSyntaxTree.Add(_backDefineLoop);
+                            return null;
+                        }
                         break;
             }
-
-            return null;
+            // Should never reach here
+            throw new SyntaxErrorException("Undefined keyword caused by unknown reason.");
         }
         
         /**
@@ -277,6 +302,26 @@ namespace LearnersLanguage
             return null;
         }
         
+        private INode TokenLoop()
+        {
+            Next();
+            // Checking for the correct syntax
+            if (!(_currentStatement[0].Type is Token.TokenType.TOKEN_KEYWORD && _currentStatement[0].Value is "FOR"))
+                throw new SyntaxErrorException("Syntax Error: LOOP must have a FOR");
+            Next();
+            
+            if (_currentStatement.Count == 0)
+                throw new SyntaxErrorException("Syntax Error: Must Specify a value to loop by");
+            
+            _backDefineLoop = new LoopNode(ParseStatement(null));
+            
+            _inLoop = true;
+            _backAbstractSyntaxTree = _abstractSyntaxTree;
+            _abstractSyntaxTree = new List<INode>();
+            _currentStatement.Clear();
+            return null;
+        }
+
         /**
          * Moves onto the next value in the current statement.
          */

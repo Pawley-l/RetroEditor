@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LearnersLanguage.Exceptions;
 using LearnersLanguage.Nodes;
 using LearnersLanguage.Nodes.Data;
@@ -13,8 +14,10 @@ namespace LearnersLanguage
      * In order to resolve a branch below, the evaluator has to execute the branch which comes from it first, to
      * get it's return.
      * </summary>
+     *
+     * TODO: Move execution from this onto the individual node classes. This will make the code more readable and easier to maintain.
      */
-    public class Eval
+    public class Walker
     {
         private Dictionary<string, IntNode> _backVariables = new Dictionary<string, IntNode>();
         private Dictionary<string, IntNode> _variables = new Dictionary<string, IntNode>();
@@ -47,6 +50,7 @@ namespace LearnersLanguage
                     FuncCallNode call => ExecuteFunctionCall(call),
                     IntNode intNode => intNode,
                     MethodNode method => ExecuteDeclareMethod(method),
+                    LoopNode loop => ExecuteLoopNode(loop),
                     _ => new IntNode(-1)
                 };
             }
@@ -61,15 +65,15 @@ namespace LearnersLanguage
          */
         private INode ExecuteOpNode(OpNode node)
         {
-            node.Right = Execute(node.Right);
-            node.Left = Execute(node.Left);
+            var right = Execute(node.Right);
+            var left = Execute(node.Left);
 
             return node.OpType switch
             {
-                OpNode.Type.Add => new IntNode(((IntNode) node.Left).Number + ((IntNode) node.Right).Number),
-                OpNode.Type.Sub => new IntNode(((IntNode) node.Left).Number - ((IntNode) node.Right).Number),
-                OpNode.Type.Mul => new IntNode(((IntNode) node.Left).Number * ((IntNode) node.Right).Number),
-                OpNode.Type.Div => new IntNode(((IntNode) node.Left).Number / ((IntNode) node.Right).Number),
+                OpNode.Type.Add => new IntNode(((IntNode) left).Number + ((IntNode) right).Number),
+                OpNode.Type.Sub => new IntNode(((IntNode) left).Number - ((IntNode) right).Number),
+                OpNode.Type.Mul => new IntNode(((IntNode) left).Number * ((IntNode) right).Number),
+                OpNode.Type.Div => new IntNode(((IntNode) left).Number / ((IntNode) right).Number),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
@@ -81,11 +85,11 @@ namespace LearnersLanguage
         {
             // Dont execute because it hasnt been declared yet
             var identifier = node.Left as IdentifierNode;
-            node.Right = Execute(node.Right);
+            var right = Execute(node.Right);
 
             if (identifier != null)
-                SetVariable(identifier, node.Right as IntNode);
-            return node.Right;
+                SetVariable(identifier, right as IntNode);
+            return right;
         }
         
         /**
@@ -94,22 +98,16 @@ namespace LearnersLanguage
          */
         private INode ExecuteFunctionCall(FuncCallNode node)
         {
-            if (node.Identifier is IdentifierNode identity)
-            {
-                var parameters = new List<IntNode>();
-                foreach (var parameter in node.Parameters)
-                {
-                    parameters.Add(Execute(parameter) as IntNode);
-                }
+            if (!(node.Identifier is IdentifierNode identity)) return null;
+            var parameters = node.Parameters.Select(parameter => Execute(parameter) as IntNode).ToList();
 
-                if (_func.ContainsKey(identity.Identifier))
-                {
-                    _func[identity.Identifier].DynamicInvoke(parameters);
-                }
-                
-                ExecuteMethod(identity, parameters);
+            if (_func.ContainsKey(identity.Identifier))
+            {
+                _func[identity.Identifier].DynamicInvoke(parameters);
             }
                 
+            ExecuteMethod(identity, parameters);
+
             return null;
         }
         
@@ -120,21 +118,17 @@ namespace LearnersLanguage
         {
             foreach (var method in _method)
             {
-                if (method.Identifier is IdentifierNode nodeid)
+                if (!(method.Identifier is IdentifierNode nodeid)) continue;
+                if (nodeid.Identifier != identifier.Identifier) continue;
+                _backVariables = _variables;
+                for (var i = 0; i < parameters.Count; i++)
                 {
-                    if (nodeid.Identifier == identifier.Identifier)
-                    {
-                        _backVariables = _variables;
-                        for (var i = 0; i < parameters.Count; i++)
-                        {
-                            if (method.Parameters[i] is IdentifierNode id)
-                                SetVariable(id, parameters[i]);
-                        }
-
-                        Execute(method.Body);
-                        _variables = _backVariables;
-                    }
+                    if (method.Parameters[i] is IdentifierNode id)
+                        SetVariable(id, parameters[i]);
                 }
+
+                Execute(method.Body);
+                _variables = _backVariables;
             }
 
             return null;
@@ -143,6 +137,32 @@ namespace LearnersLanguage
         private INode ExecuteDeclareMethod(MethodNode method)
         {
             _method.Add(method);
+            return null;
+        }
+
+        private INode ExecuteLoopNode(LoopNode loop)
+        {
+            if (loop.ForValue is IdentifierNode id)
+            {
+                var count = GetVariable(id).Number;
+                
+                for (var i = 0; i < count; i++)
+                {
+                    count = GetVariable(id).Number;
+                    
+                    Execute(loop.Body);
+                }
+            }
+            else if (loop.ForValue is IntNode value)
+            {
+                var count = value.Number;
+                
+                for (var i = 0; i < count; i++)
+                {
+                    Execute(loop.Body);
+                }
+            }
+
             return null;
         }
         
@@ -183,7 +203,7 @@ namespace LearnersLanguage
             }
             catch (Exception)
             {
-                throw new UndeclaredSymbolException(identity.Identifier + " has not been declared. ");
+                throw new UndeclaredSymbolException(identity.Identifier + " has not been declared. ", identity.Identifier);
             }
         }
     }

@@ -23,7 +23,8 @@ namespace LearnersLanguage
             
             if (args.Length < 1) InteractiveMode();
             
-            if (args[0] == "-r") InteractiveMode();
+            if (args.Length > 1)
+                if (args[0] == "-r") InteractiveMode();
             
             // Executes every file that is inputted
             foreach (var arg in args)
@@ -47,18 +48,14 @@ namespace LearnersLanguage
                 try
                 {
                     _interpreter.ParseLine(input);
-                    _interpreter.Execute();
+                    
+                    if (input == "execute")
+                        _interpreter.Execute();
                 }
                 catch (UndeclaredSymbolException e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.Line + ": " + e.Statement);
                     
-                    Console.Write(" Stacktrace? y/n ");
-                    input = Console.ReadLine();
-
-                    if (input == "y")
-                        Console.WriteLine(e.StackTrace);
-
                     Exit(null);
                 }
             }

@@ -12,7 +12,7 @@ namespace LearnersLanguageTest
         
         // variables to be manipulated in                                                     the script
         private static bool _methodTrue = false;
-        private static bool _loopTrue = false;
+        private static int _loopTrue;
         private static bool _conditionTrue = false;
         private static bool _mapMethod = false;
 
@@ -24,7 +24,7 @@ namespace LearnersLanguageTest
         
         private static IntNode TestLoop(List<IntNode> input)
         {
-            _loopTrue = true;
+            _loopTrue++;
             return null;
         }
         
@@ -55,7 +55,7 @@ namespace LearnersLanguageTest
             _interpreter = new Interpreter();
             _interpreter.MapMethod("test" ,TestLoop);
             _interpreter.ExecuteFromFile("../../../../../Examples/Tests/loop.ll");      
-            Assert.IsTrue(_loopTrue);
+            Assert.AreEqual(10 , _loopTrue);
         }
         
         [Test]
