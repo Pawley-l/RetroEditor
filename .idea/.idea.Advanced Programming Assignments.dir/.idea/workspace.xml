@@ -3,6 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="42ed2639-911e-4d26-a9b2-710de23a0c2d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Advanced Programming Assignments.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Advanced Programming Assignments.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageSoftware/Editor/Editor.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/LanguageSoftware/Editor/Editor.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageSoftware/Editor/Form1.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageSoftware/Editor/Form1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageSoftware/Editor/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/LanguageSoftware/Editor/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LanguageSoftware/LanguageSoftware.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/LanguageSoftware/LanguageSoftware.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,13 +45,14 @@
       <option name="presentableId" value="Default" />
       <updated>1601492611543</updated>
       <workItem from="1601492621339" duration="1458000" />
+      <workItem from="1601801214664" duration="953000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="UnityProjectConfiguration" hasMinimizedUI="null" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
