@@ -6,8 +6,8 @@
 - [x] Variable support
 - [x] Method binding api
 - [x] Method declaring and calling
-- [~] Syntax Checking
-- [~] Loop and Conditions
+- [Partial] Syntax Checking
+- [x] Loop and Conditions
 
 ### Editor
 

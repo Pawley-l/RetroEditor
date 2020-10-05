@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using LearnersLanguage.Exceptions;
 using LearnersLanguage.Nodes;
@@ -51,6 +52,7 @@ namespace LearnersLanguage
                     IntNode intNode => intNode,
                     MethodNode method => ExecuteDeclareMethod(method),
                     LoopNode loop => ExecuteLoopNode(loop),
+                    ConditionalNode conditional => ExecuteConditional(conditional),
                     _ => new IntNode(-1)
                 };
             }
@@ -76,6 +78,22 @@ namespace LearnersLanguage
                 OpNode.Type.Div => new IntNode(((IntNode) left).Number / ((IntNode) right).Number),
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+        
+        private INode ExecuteConditional(ConditionalNode node)
+        {
+            var right = Execute(node.Right) as IntNode;
+            var left = Execute(node.Left) as IntNode;
+
+            Debug.Assert(right != null, nameof(right) + " != null");
+            Debug.Assert(left != null, nameof(left) + " != null");
+            
+            if (right.Number == left.Number)
+            {
+                Execute(node.Body);
+            }
+
+            return null;
         }
         
         /**

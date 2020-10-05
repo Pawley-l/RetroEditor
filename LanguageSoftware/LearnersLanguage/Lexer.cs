@@ -27,9 +27,32 @@ namespace LearnersLanguage
         {
             // TODO: Improve detection from just spaces
             // I think nodes is the wrong name
-            var nodes = SplitInput(statement);
+            var tmpnodes = SplitInput(statement);
 
             var added = false;
+            var skip = false;
+            
+            var nodes = new List<string>();
+            
+            /*
+             * TODO: TEMP solution, need more elegant fix
+             */
+            for (var i = 0; i < tmpnodes.Count; i++)
+            {
+                if (skip)
+                {
+                    skip = false;
+                    continue;
+                }
+
+                if (tmpnodes.ElementAt(i) == "=" && tmpnodes.ElementAt(i + 1) == "=")
+                {
+                    nodes.Add("==");
+                    skip = true;
+                    continue;
+                }
+                nodes.Add(tmpnodes.ElementAt(i));
+            }
             
             foreach (var node in nodes)
             {

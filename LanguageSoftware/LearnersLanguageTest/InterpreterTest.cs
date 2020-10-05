@@ -10,7 +10,7 @@ namespace LearnersLanguageTest
     {
         private static Interpreter _interpreter;
         
-        // variables to be manipulated in                                                     the script
+        // variables to be manipulated in the script
         private static bool _methodTrue = false;
         private static int _loopTrue;
         private static bool _conditionTrue = false;

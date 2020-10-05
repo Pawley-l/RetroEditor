@@ -105,12 +105,12 @@ namespace LearnersLanguageTest
             var comparison = new Token.TokenType[5] {
                 Token.TokenType.TOKEN_KEYWORD,
                 Token.TokenType.TOKEN_INT,
-                Token.TokenType.TOKEN_EQU,
+                Token.TokenType.TOKEN_KEYWORD,
                 Token.TokenType.TOKEN_SYMBOL,
                 Token.TokenType.TOKEN_END
             };
             
-            _lexer.AddStatement("if 10 = hello");
+            _lexer.AddStatement("IF 10 == hello");
             
             for (var i = 0; i < 5; i++)
             {

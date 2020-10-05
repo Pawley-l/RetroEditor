@@ -16,6 +16,7 @@ namespace LearnersLanguage
      * TODO: Implement template method pattern for better error handling
      * TODO: Clean and simplify
      * TODO: Class too big
+     * TODO: Make conditionals, methods and loops recursive so multiple can be defined at once
      */
     public class Parser
     {
@@ -25,9 +26,10 @@ namespace LearnersLanguage
          * the parser hits the ENDMETHOD keyword which it then swaps them back and adds the method to the main ast. 
          */
         private List<INode> _backAbstractSyntaxTree = new List<INode>(); 
-        private bool _inMethod, _inLoop;
+        private bool _inMethod, _inLoop, _inConditional;
         private MethodNode _backDeclareMethod;
         private LoopNode _backDefineLoop;
+        private ConditionalNode _backConditionalNode;
         
         private List<INode> _abstractSyntaxTree = new List<INode>();
         private List<Token> _currentStatement = new List<Token>();
@@ -116,7 +118,7 @@ namespace LearnersLanguage
                         Next();
                         return null;
                     case Token.TokenType.TOKEN_KEYWORD:
-                        TokenKeyword();
+                        TokenKeyword(previous);
                         break;
                     case Token.TokenType.TOKEN_INT:
                         return TokenInt();
@@ -182,15 +184,40 @@ namespace LearnersLanguage
             return opnext;
         }
 
-        private INode TokenKeyword()
+        private INode TokenKeyword(INode previous)
         {
             // Split the AST at the end for each keyword
             switch (_currentStatement[0].Value)
             {
                     case "IF":
-                        break;
+                        TokenConditional();
+                        return null;
                     case "ENDIF":
+                        if (_inConditional)
+                        {
+                            _backConditionalNode.Body = _abstractSyntaxTree;
+                            _abstractSyntaxTree = _backAbstractSyntaxTree;
+                            _inConditional = false;
+                            _abstractSyntaxTree.Add(_backConditionalNode);
+
+                            return null;
+                        }
                         break;
+                    case "==":
+                        if (_inConditional)
+                        {
+                            _backConditionalNode.Left = previous;
+                            var next = ParseStatement(_backConditionalNode);
+                            _backConditionalNode.Right = next;
+                            
+                                                        
+                            _backAbstractSyntaxTree = _abstractSyntaxTree;
+                            _abstractSyntaxTree = new List<INode>();
+                            _abstractSyntaxTree.Clear();
+                            return null;
+                        }
+                        break;
+                    
                     case "METHOD":
                         return DeclareMethod();
                     case "ENDMETHOD":
@@ -249,7 +276,7 @@ namespace LearnersLanguage
             _currentStatement = holder;
             return new FuncCallNode(previous, parameters.ToArray());
         }
-        
+
         /**
          * When declaring a variable, the node it equals to needs to be resolved first before the DeclarerNode can be added
          */
@@ -299,6 +326,15 @@ namespace LearnersLanguage
             _backAbstractSyntaxTree = _abstractSyntaxTree;
             _abstractSyntaxTree = new List<INode>();
             _currentStatement.Clear();
+            return null;
+        }
+
+        private INode TokenConditional()
+        {
+            Next();
+            _backConditionalNode = new ConditionalNode();
+            _inConditional = true;
+            ParseStatement(null);
             return null;
         }
         

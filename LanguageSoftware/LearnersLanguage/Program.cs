@@ -47,7 +47,8 @@ namespace LearnersLanguage
 
                 try
                 {
-                    _interpreter.ParseLine(input);
+                    if (input != "execute")
+                        _interpreter.ParseLine(input);
                     
                     if (input == "execute")
                         _interpreter.Execute();

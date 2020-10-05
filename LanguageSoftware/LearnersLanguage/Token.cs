@@ -28,9 +28,10 @@ namespace LearnersLanguage
             TOKEN_END
         }
         
-        private static string[] keywords = new string[7]
+        private static string[] keywords = new string[8]
         {
             "IF",
+            "==",
             "ENDIF",
             "METHOD",
             "ENDMETHOD",
@@ -40,7 +41,7 @@ namespace LearnersLanguage
         };
         
         /**
-         * <summary>Converts a tokens type into a string </summary>
+         * <summary> Converts a tokens type into a string </summary>
          */
         public static TokenType StrToToken(string token)
         {
