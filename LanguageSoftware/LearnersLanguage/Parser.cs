@@ -18,15 +18,18 @@ namespace LearnersLanguage
      */
     public class Parser
     {
-        private List<INode> _backAbstractSyntaxTree = new List<INode>(); // Uses for holding the main syntax tree when working on a method declaration
-        private bool _inMethod = false;
+        /*
+         * When defining a method it has to generate it's own AST for the lines within the method. When this happens,
+         * main abstract syntax tree is moved onto the back abstract syntax tree. And then the parsing continues until
+         * the parser hits the ENDMETHOD keyword which it then swaps them back and adds the method to the main ast. 
+         */
+        private List<INode> _backAbstractSyntaxTree = new List<INode>(); 
+        private bool _inMethod, _inLoop;
         private MethodNode _backDeclareMethod;
         
         private List<INode> _abstractSyntaxTree = new List<INode>();
         private List<Token> _currentStatement = new List<Token>();
 
-        
-        
         /**
          * <summary>
          * Method loads the lex and generates the Abstract Syntax Tree which can be gotten by GetAst()
