@@ -1,6 +1,5 @@
-x = 10 
+x = 10
 
-loop x > 0
+LOOP FOR x
 	test()
-	x = x - 1
-endloop
+ENDLOOP
