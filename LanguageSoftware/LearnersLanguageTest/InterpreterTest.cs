@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using LearnersLanguage;
-using LearnersLanguage.Nodes.Data;
+using LearnersLanguage.Nodes.Types;
 using NUnit.Framework;
 
 namespace LearnersLanguageTest

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace LearnersLanguage.Nodes.Func
+namespace LearnersLanguage.Nodes.Features
 {
     public class LoopNode : INode
     {

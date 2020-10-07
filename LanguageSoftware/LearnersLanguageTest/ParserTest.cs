@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using LearnersLanguage;
-using LearnersLanguage.Nodes.Data;
-using LearnersLanguage.Nodes.Func;
+using LearnersLanguage.Nodes.Operations;
+using LearnersLanguage.Nodes.Static;
+using LearnersLanguage.Nodes.Types;
 
 namespace LearnersLanguageTest
 {
@@ -28,13 +29,13 @@ namespace LearnersLanguageTest
             _parser.LoadTokens(_lexer);
             var ast = _parser.GetAst();
 
-            if (ast[0] is OpNode node)
+            if (ast[0] is IntOpNode node)
             {
                 if (node.Left is IntNode left)
-                    Assert.AreEqual(left.Number, 1);
+                    Assert.AreEqual(left.Value, 1);
                 if (node.Left is IntNode right)
-                    Assert.AreEqual(right.Number, 1);
-                Assert.AreEqual(node.OpType, OpNode.Type.Add);
+                    Assert.AreEqual(right.Value, 1);
+                Assert.AreEqual(node.OpType, IntOpNode.Type.Add);
             }
             else
                 Assert.Fail();
@@ -51,9 +52,9 @@ namespace LearnersLanguageTest
 
             if (ast[0] is FuncCallNode node)
             {
-                if (node.Identifier is IdentifierNode identity)
+                if (node.Identifier is ReferenceNode identity)
                 {
-                    Assert.AreEqual(identity.Identifier, "function");
+                    Assert.AreEqual(identity.Value, "function");
                 }
                 else 
                     Assert.Fail();
@@ -70,15 +71,15 @@ namespace LearnersLanguageTest
 
             Console.WriteLine(ast[0]);
 
-            if (ast[0] is DeclareVarNode node)
+            if (ast[0] is DeclareIntVarNode node)
             {
-                if (node.Left is IdentifierNode identity)
-                    Assert.AreEqual(identity.Identifier, "value");
+                if (node.Left is ReferenceNode identity)
+                    Assert.AreEqual(identity.Value, "value");
                 else
                     Assert.Fail();
                 
                 if (node.Right is IntNode value)
-                    Assert.AreEqual(value.Number, 100);
+                    Assert.AreEqual(value.Value, 100);
             }
         }
     }

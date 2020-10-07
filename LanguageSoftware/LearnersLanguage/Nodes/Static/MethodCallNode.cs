@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace LearnersLanguage.Nodes.Func
+namespace LearnersLanguage.Nodes.Static
 {
     /**
      * Holds a identifier and parameters 
@@ -9,8 +9,7 @@ namespace LearnersLanguage.Nodes.Func
     {
         public INode Identifier;
         public INode[] Parameters;
-
-
+        
         public FuncCallNode(INode identifier, INode[] parameters)
         {
             Identifier = identifier;

@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using LearnersLanguage.Exceptions;
 using LearnersLanguage.Nodes;
-using LearnersLanguage.Nodes.Data;
-using LearnersLanguage.Nodes.Func;
+using LearnersLanguage.Nodes.Features;
+using LearnersLanguage.Nodes.Operations;
+using LearnersLanguage.Nodes.Static;
+using LearnersLanguage.Nodes.Types;
 
 namespace LearnersLanguage
 {
@@ -14,14 +16,14 @@ namespace LearnersLanguage
      * The evaluator is walks up every "branch" in the Abstract Syntax Tree and then executes everything in order.
      * In order to resolve a branch below, the evaluator has to execute the branch which comes from it first, to
      * get it's return.
+     *
+     * For the majority of this class, the real execution happens in the individual node. However, for instances
+     * where context is more important, there execution happens here. for example, when executing a method. 
      * </summary>
      *
-     * TODO: Move execution from this onto the individual node classes. This will make the code more readable and easier to maintain.
      */
     public class Walker
     {
-        private Dictionary<string, IntNode> _backVariables = new Dictionary<string, IntNode>();
-        private Dictionary<string, IntNode> _variables = new Dictionary<string, IntNode>();
         private Dictionary<string, Func<List<IntNode>, IntNode>> _func = new Dictionary<string, Func<List<IntNode>, IntNode>>();
         private List<MethodNode> _method = new List<MethodNode>();
         
@@ -45,9 +47,11 @@ namespace LearnersLanguage
             {
                 return node switch
                 {
-                    DeclareVarNode declarerNode => ExecuteDeclareNode(declarerNode),
-                    OpNode opNode => ExecuteOpNode(opNode),
-                    IdentifierNode identity => GetVariable(identity),
+                    DeclareIntVarNode declarerNode => declarerNode.Execute(declarerNode.Left as ReferenceNode, 
+                        Execute(declarerNode.Right) as IntNode),
+                    IntOpNode opNode => opNode.Execute(Execute(opNode.Left) as IntNode, 
+                        Execute(opNode.Right) as IntNode),
+                    ReferenceNode identity => new IntNode(identity.Value),
                     FuncCallNode call => ExecuteFunctionCall(call),
                     IntNode intNode => intNode,
                     MethodNode method => ExecuteDeclareMethod(method),
@@ -57,29 +61,9 @@ namespace LearnersLanguage
                 };
             }
             catch (UndeclaredSymbolException)
-            {
-                throw;
-            }
+            { throw; }
         }
-        
-        /**
-         * Resolves left and right values then executes itself turning into a IntNode
-         */
-        private INode ExecuteOpNode(OpNode node)
-        {
-            var right = Execute(node.Right);
-            var left = Execute(node.Left);
 
-            return node.OpType switch
-            {
-                OpNode.Type.Add => new IntNode(((IntNode) left).Number + ((IntNode) right).Number),
-                OpNode.Type.Sub => new IntNode(((IntNode) left).Number - ((IntNode) right).Number),
-                OpNode.Type.Mul => new IntNode(((IntNode) left).Number * ((IntNode) right).Number),
-                OpNode.Type.Div => new IntNode(((IntNode) left).Number / ((IntNode) right).Number),
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-        
         private INode ExecuteConditional(ConditionalNode node)
         {
             var right = Execute(node.Right) as IntNode;
@@ -88,7 +72,7 @@ namespace LearnersLanguage
             Debug.Assert(right != null, nameof(right) + " != null");
             Debug.Assert(left != null, nameof(left) + " != null");
             
-            if (right.Number == left.Number)
+            if (right.Value == left.Value)
             {
                 Execute(node.Body);
             }
@@ -97,90 +81,68 @@ namespace LearnersLanguage
         }
         
         /**
-         * Executes its equal first then sets the variable to it's value
-         */
-        private INode ExecuteDeclareNode(DeclareVarNode node)
-        {
-            // Dont execute because it hasnt been declared yet
-            var identifier = node.Left as IdentifierNode;
-            var right = Execute(node.Right);
-
-            if (identifier != null)
-                SetVariable(identifier, right as IntNode);
-            return right;
-        }
-        
-        /**
          * Function calls are mapped to functions in _func. The identifier node identifies the method and then executes
          * the nodes as parameters before invoking the method.
          */
         private INode ExecuteFunctionCall(FuncCallNode node)
         {
-            if (!(node.Identifier is IdentifierNode identity)) return null;
+            if (!(node.Identifier is ReferenceNode identity)) return null;
             var parameters = node.Parameters.Select(parameter => Execute(parameter) as IntNode).ToList();
 
-            if (_func.ContainsKey(identity.Identifier))
+            if (_func.ContainsKey(identity.Value))
             {
-                _func[identity.Identifier].DynamicInvoke(parameters);
+                _func[identity.Value].DynamicInvoke(parameters);
+                return null;
             }
                 
             ExecuteMethod(identity, parameters);
-
             return null;
         }
         
         /**
          * Executes user defined method if it exists
          */
-        private INode ExecuteMethod(IdentifierNode identifier, List<IntNode> parameters)
+        private INode ExecuteMethod(ReferenceNode reference, List<IntNode> parameters)
         {
-            foreach (var method in _method)
-            {
-                if (!(method.Identifier is IdentifierNode nodeid)) continue;
-                if (nodeid.Identifier != identifier.Identifier) continue;
-                _backVariables = _variables;
-                for (var i = 0; i < parameters.Count; i++)
-                {
-                    if (method.Parameters[i] is IdentifierNode id)
-                        SetVariable(id, parameters[i]);
-                }
-
-                Execute(method.Body);
-                _variables = _backVariables;
-            }
-
+            var method = MethodNode.Find(reference);
+            
+            method.PrepareState();
+                
+            Execute(method.Execute(parameters, reference));
+                
+            method.ResetStateChanges();
+            
             return null;
         }
         
         private INode ExecuteDeclareMethod(MethodNode method)
         {
-            _method.Add(method);
+            method.StoreVariable(method.Identifier.Value);
             return null;
         }
 
         private INode ExecuteLoopNode(LoopNode loop)
         {
-            if (loop.ForValue is IdentifierNode id)
+            if (loop.ForValue is ReferenceNode id)
             {
-                var count = GetVariable(id).Number;
-                
+                var count = new IntNode(id.Value).Value;
+
                 for (var i = 0; i < count; i++)
                 {
-                    count = GetVariable(id).Number;
+                    count = new IntNode(id.Value).Value;
                     
                     Execute(loop.Body);
                 }
             }
             else if (loop.ForValue is IntNode value)
             {
-                var count = value.Number;
+                var count = value.Value;
                 
                 for (var i = 0; i < count; i++)
                 {
                     Execute(loop.Body);
                 }
             }
-
             return null;
         }
         
@@ -188,8 +150,6 @@ namespace LearnersLanguage
          * <summary>
          * Adds a definition of the method into the eval's state, so it can be executed in code.
          * </summary>
-         *
-         * TODO: This needs testing
          */
         public void MapMethod(string identity, Func<List<IntNode>, IntNode> func)
         {
@@ -202,27 +162,6 @@ namespace LearnersLanguage
         public void Reset()
         {
             _method.Clear();
-            _variables.Clear();
-        }
-        
-        /*
-         * Sets and gets a variable from the dictionary. Added to methods for future refactoring 
-         */
-        private void SetVariable(IdentifierNode identifier, IntNode value)
-        {
-            _variables[identifier.Identifier] = value;
-        }
-
-        private IntNode GetVariable(IdentifierNode identity)
-        {
-            try
-            {
-                return _variables[identity.Identifier];
-            }
-            catch (Exception)
-            {
-                throw new UndeclaredSymbolException(identity.Identifier + " has not been declared. ", identity.Identifier);
-            }
         }
     }
 }

@@ -2,24 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using LearnersLanguage.Exceptions;
-using LearnersLanguage.Nodes.Data;
+using LearnersLanguage.Nodes.Types;
 
 namespace LearnersLanguage
 {
     /**
      * <summary> The LearnersLanguage interpreter. </summary>
-     * TODO(project): Add loop support
-     * TODO(project): Add condition support
+     * 
      * TODO(project): Add string literal and string variables
      * TODO(project): Improve method mapping
      * TODO(project): Check for better design patterns
      * TODO(project): Add line numbers to exceptions & better descriptions
+     * TODO(project): Add singleton class that handles method mapping and variable storage
+     * TODO(project): Add classes and file imports
      */
     public class Interpreter
     {
         private readonly Lexer _lexer = new Lexer();
         private readonly Walker _eval = new Walker();
-        private int Line;
+        private int _line;
         /**
          * <summary> Reads and executes code from a file. </summary>
          * <code>
@@ -52,7 +53,7 @@ namespace LearnersLanguage
          */
         public void ParseLine(string line)
         {
-            Line++;
+            _line++;
             _lexer.AddStatement(line);
         }
         
@@ -71,12 +72,12 @@ namespace LearnersLanguage
             // Adding line number to the exception for better readability
             catch (UndeclaredSymbolException e)
             {
-                e.Line = Line;
+                e.Line = _line;
                 throw;
             }
             catch (SyntaxErrorException e)
             {
-                e.Line = Line;
+                e.Line = _line;
                 throw;
             }
         }

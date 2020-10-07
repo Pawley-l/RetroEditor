@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LearnersLanguage.Exceptions;
-using LearnersLanguage.Nodes.Data;
+using LearnersLanguage.Nodes.Types;
 
 namespace LearnersLanguage
 {
