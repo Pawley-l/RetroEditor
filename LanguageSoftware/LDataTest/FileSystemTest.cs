@@ -23,12 +23,11 @@ namespace LDataTest
 
             foreach (var item in FileSystem.GetFileSystemRoot())
             {
+                
                 if (item is Drive drive && !DriveExists)
                 {
-                    DriveExists = (drive.Id == "C");
+                    DriveExists = (drive.Id == @"C:\");
                 }
-                else 
-                    Assert.Fail(); // This should return drives only
             }
             Assert.IsTrue(DriveExists);
         }
@@ -39,7 +38,10 @@ namespace LDataTest
         [Test]
         public void GetFile()
         {
-            Assert.AreSame("TRUE", FileSystem.GetFileContents("../../../../../Examples/ReadTest.txt")[0]);
+            var file = FileSystem.GetFileContents(
+                System.IO.Directory.GetCurrentDirectory() + "../../../../../../Examples/Tests/ReadTest.txt");
+            
+            Assert.AreEqual("TRUE", file[0]);
         }
         
         /**
@@ -50,36 +52,18 @@ namespace LDataTest
         {
             // Gets an project folder
             var FileExists = false;
-
-            foreach (var item in FileSystem.GetFileSystemRoot())
+            var folder = System.IO.Directory.GetCurrentDirectory() + "../../../../../../Examples/Tests/";
+            
+            foreach (var item in FileSystem.GetFolderContents(folder))
             {
                 if (item is File file && !FileExists)
                 {
+                    Console.WriteLine(file.FileName);
+                    
                     FileExists = (file.FileName == "ReadTest.txt");
                 }
-                else 
-                    Assert.Fail(); // This directory shouldn't have any folders in it
             }
             Assert.IsTrue(FileExists);
-
-        }
-        
-        /**
-         * Looks for the "Windows" folder that exists in every windows install (windows 10)
-         */
-        [Test]
-        public void GetDrive()
-        {
-            var FolderExists = false;
-
-            foreach (var item in FileSystem.GetFileSystemRoot())
-            {
-                if (item is Folder folder && !FolderExists)
-                {
-                    FolderExists = (folder.Path == "C:/Windows");
-                }
-            }
-            Assert.IsTrue(FolderExists);
         }
     }
 }

@@ -7,5 +7,9 @@
     &lt;TestId&gt;NUnit3x::34867317-404C-4D33-9565-083AEE9D438F::.NETCoreApp,Version=v3.1::LearnersLanguageTest.ParserTest.GenDeclarerNode&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::34867317-404C-4D33-9565-083AEE9D438F::.NETCoreApp,Version=v3.1::LearnersLanguageTest.ParserTest.GenFuncCallNode&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::34867317-404C-4D33-9565-083AEE9D438F::.NETCoreApp,Version=v3.1::LearnersLanguageTest.InterpreterTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::371D465F-CC1C-4EC4-AEF8-29D94F5F4115::.NETCoreApp,Version=v3.1::LDataTest.FileSystemTest.GetFileSystemRootTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::371D465F-CC1C-4EC4-AEF8-29D94F5F4115::.NETCoreApp,Version=v3.1::LDataTest.FileSystemTest.GetFile&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::371D465F-CC1C-4EC4-AEF8-29D94F5F4115::.NETCoreApp,Version=v3.1::LDataTest.FileSystemTest.GetFolder&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::371D465F-CC1C-4EC4-AEF8-29D94F5F4115::.NETCoreApp,Version=v3.1::LDataTest.FileSystemTest.GetDrive&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

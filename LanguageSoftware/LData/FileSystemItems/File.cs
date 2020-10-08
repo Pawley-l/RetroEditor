@@ -1,24 +1,26 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace LData.FileSystemItems
 {
     public class File : IFileSystemItem
     {
-        private string _filename;
         private string _path;
         private string _drive;
-        private List<string> _contents;
-        
+
         /**
          * <summary> Loads the file with the file path, optionally can create if doesn't exist </summary>
          * <param name="file_path"> Path to the file </param>
          * <param name="create"> Optional. Create file if doesn't exist </param>
          */
-        internal File(string file_path, bool create = false)
+        internal File(string file_path, string drive, bool create = false)
         {
             _path = file_path;
+            _drive = drive;
             
-            // TODO: load file contents & create
+            if (create)
+                SetFile(null, file_path, true);
         }
         
         /**
@@ -34,7 +36,7 @@ namespace LData.FileSystemItems
          */
         public string FileName
         {
-            get => _filename;
+            get => System.IO.Path.GetFileName(_path);
         }
         
         /**
@@ -43,21 +45,32 @@ namespace LData.FileSystemItems
         public string Drive
         {
             get => _drive;
-            set => _drive = value;
         }
         
         /**
-         * <summary> Gets the contents of the file </summary>
+         * <summary> Gets and sets the contents of the file </summary>
          */
         public List<string> Contents
         {
-            get => _contents;
-            set => _contents = value;
+            get => new List<string>(System.IO.File.ReadAllLines(_path));
+            set => SetFile(value, _path,false);
+        }
+        
+        /**
+         * <summary> Gets the contents of the file in byte format </summary>
+         */
+        public List<byte> ContentsByte
+        {
+            get => new List<byte>(System.IO.File.ReadAllBytes(_path));
         }
 
-        private void CreateFile()
+        /**
+         * Write the contents to the file
+         */
+        private static void SetFile(IEnumerable<string> contents, string path, bool create = false)
         {
-            // TODO: Create File
+            // TODO: Use create parameter and throw exception if file doesnt exist
+            System.IO.File.WriteAllLines(path, contents.ToArray());
         }
     }
 }
