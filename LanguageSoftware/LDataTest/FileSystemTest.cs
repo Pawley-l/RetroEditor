@@ -56,12 +56,10 @@ namespace LDataTest
             
             foreach (var item in FileSystem.GetFolderContents(folder))
             {
-                if (item is File file && !FileExists)
-                {
-                    Console.WriteLine(file.FileName);
+                if (!(item is File file) || FileExists) continue;
+                Console.WriteLine(file.FileName);
                     
-                    FileExists = (file.FileName == "ReadTest.txt");
-                }
+                FileExists = (file.FileName == "ReadTest.txt");
             }
             Assert.IsTrue(FileExists);
         }

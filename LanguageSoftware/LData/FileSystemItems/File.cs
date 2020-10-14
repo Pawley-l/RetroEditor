@@ -20,7 +20,7 @@ namespace LData.FileSystemItems
             _drive = drive;
             
             if (create)
-                SetFile(null, file_path, true);
+                SetFile(new List<string>(), file_path, true);
         }
         
         /**
