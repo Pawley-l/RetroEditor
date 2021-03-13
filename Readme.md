@@ -19,7 +19,7 @@
 
 ## Requirements
 ```
-1 Assignment due 9/11/2020  
+1 
         1.1 Management  
                 1.1.1 Appropriate unit tests set up  
                 1.1.2 Documentated  
@@ -29,7 +29,7 @@
                 1.2.3 Syntax Checking  
                 1.2.4 Drawing Commands working e.g. shapes, colours and fills  
                 1.2.5 Written with inheritance and design patterns  
-2 Assignment due 4/1/2021
+2 
         2.1 Management  
                 2.1.1 Professional use of version Control  
                 2.2 Extended Language  
