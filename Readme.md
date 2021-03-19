@@ -1,4 +1,12 @@
-# Advanced Software Engineering Assessed Work
+# RetroEditor
+
+- BASIC-line scripting language with easy interface
+- Simplistic WPF-based text editor with graphics functions
+
+## TODO
+- Whole code clean up
+- Simplify Interpreter
+
 
 ## Feature Checklist
 ### Language 
